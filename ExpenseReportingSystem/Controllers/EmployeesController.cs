@@ -48,6 +48,18 @@ namespace ExpenseReportingSystem.Controllers
 
             return employee;
         }
+        [HttpGet("{email}/{password}")]
+        public async Task<ActionResult<Employee>> Login(string email, string password)
+        {
+            var employee = await _context.Employees.SingleOrDefaultAsync(e => e.Email == email
+                                                                    && e.Password == password);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            return employee;
+        }
+
 
         // PUT: api/Employees/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
