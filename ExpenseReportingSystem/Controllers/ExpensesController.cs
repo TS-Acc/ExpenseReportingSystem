@@ -51,7 +51,7 @@ namespace ExpenseReportingSystem.Controllers
 
         // ************ Handmade GetApprovedExpenses Method ************
         // GET: api/Expenses/approved
-        [HttpGet("apporved")]
+        [HttpGet("approved")]
         public async Task<ActionResult<IEnumerable<Expense>>> GetApprovedExpenses() {
             if (_context.Expenses == null) {
                 return NotFound();
