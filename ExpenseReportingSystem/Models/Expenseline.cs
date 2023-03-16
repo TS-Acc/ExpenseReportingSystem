@@ -7,8 +7,10 @@ namespace ExpenseReportingSystem.Models {
         public int Quantity { get; set; } = 1;
 
         // FK's and Virtual Properties
-        [JsonIgnore]
+        
         public int ExpenseId { get; set; }
+
+        [JsonIgnore]
         public virtual Expense Expense { get; set; } = null!;
 
         public int ItemId { get; set; }

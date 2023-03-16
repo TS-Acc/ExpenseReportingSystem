@@ -79,10 +79,48 @@ namespace ExpenseReportingSystem.Controllers
 
             return NoContent();
         }
+        //[HttpPut("review/{id}")]
+        //public async Task<IActionResult> ReviewExpense(int id, Expense expense)
+        //{
+        //    var employee = await _context.Employees.FindAsync(expense.EmployeeId);
+        //    var expenseLines = await _context.Expenselines.FindAsync(expense.Expenselines.Id);
+        //    switch (id == expense.Id)
+        //    {
+        //        case false:
+        //            return BadRequest();
 
-        // POST: api/Expenses
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        //        case true when expense.Total > 75:
+        //            expense.Status = "REVIEW";
+        //            _context.Entry(expense).State = EntityState.Modified;
+        //            break;
+
+        //        case true when expense.Total <= 75 && employee != null:
+        //            expense.Status = "APPROVED";
+        //            employee.ExpensesDue += expense.Total;
+        //            _context.Entry(expense).State = EntityState.Modified;
+        //            break;
+        //    }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!ExpenseExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
+        //    return NoContent();
+        //}
+
+            // POST: api/Expenses
+            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+            [HttpPost]
         public async Task<ActionResult<Expense>> PostExpense(Expense expense)
         {
           if (_context.Expenses == null)

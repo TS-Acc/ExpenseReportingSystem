@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ExpenseReportingSystem.Models
 {
@@ -17,7 +18,8 @@ namespace ExpenseReportingSystem.Models
 
         // virtual employee to hold the FK instance when reading an expense and a collection of expenselines related
         // to this expense
-        public virtual Employee? Employees { get; set; }
-        public virtual ICollection<Expenseline> Expenselines { get; set; } = null!;
+        public virtual Employee? Employees { get; set; } = null!;
+        [JsonIgnore]
+        public virtual ICollection<Expenseline?> Expenselines { get; set; } = null!;
     }
 }
