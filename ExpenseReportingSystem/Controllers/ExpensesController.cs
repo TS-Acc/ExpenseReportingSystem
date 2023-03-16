@@ -61,7 +61,7 @@ namespace ExpenseReportingSystem.Controllers
 
         // ************ Handmade GetExpensesInReview Method ************
         // GET: api/Expenses/review
-        [HttpGet("reveiw")]
+        [HttpGet("review")]
         public async Task<ActionResult<IEnumerable<Expense>>> GetExpensesInReview() {
             if (_context.Expenses == null) {
                 return NotFound();
