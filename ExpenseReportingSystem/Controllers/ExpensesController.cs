@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ExpenseReportingSystem.Models;
+using System.Security.Cryptography.Xml;
 
 namespace ExpenseReportingSystem.Controllers
 {
@@ -99,6 +100,35 @@ namespace ExpenseReportingSystem.Controllers
 
             return NoContent();
         }
+
+        // ************ Handmade ApproveExpense Method ************
+        // PUT: api/Expenses/approve/5
+        [HttpPut("approve/{id}")]
+        public async Task<IActionResult> ApproveExpense(int id, Expense expense) {
+            if (id != expense.Id) {
+                return BadRequest();
+            }
+
+            var employee = await _context.Employees.SingleOrDefaultAsync(x => x.Id == expense.EmployeeId);           
+            employee.ExpensesDue += expense.Total;
+            await _context.SaveChangesAsync();
+
+            expense.Status = "APPROVED";
+            return await PutExpense(id, expense);
+        }
+
+        // ************ Handmade ApproveExpense Method ************
+        // PUT: api/Expenses/reject/5
+        [HttpPut("reject/{id}")]
+        public async Task<IActionResult> RejectExpense(int id, Expense expense) {
+            if (id != expense.Id) {
+                return BadRequest();
+            }
+            expense.Status = "REJECTED";
+            return await PutExpense(id, expense);
+        }
+
+
         [HttpPut("review/{id}")]
         public async Task<IActionResult> ReviewExpense(int id, Expense expense)
         {
