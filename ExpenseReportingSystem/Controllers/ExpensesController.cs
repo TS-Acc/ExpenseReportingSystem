@@ -49,6 +49,26 @@ namespace ExpenseReportingSystem.Controllers
             return expense;
         }
 
+        // ************ Handmade GetApprovedExpenses Method ************
+        // GET: api/Expenses/approved
+        [HttpGet("approved")]
+        public async Task<ActionResult<IEnumerable<Expense>>> GetApprovedExpenses() {
+            if (_context.Expenses == null) {
+                return NotFound();
+            }
+            return await _context.Expenses.Where(x=> x.Status == "APPROVED").ToListAsync();
+        }
+
+        // ************ Handmade GetExpensesInReview Method ************
+        // GET: api/Expenses/review
+        [HttpGet("review")]
+        public async Task<ActionResult<IEnumerable<Expense>>> GetExpensesInReview() {
+            if (_context.Expenses == null) {
+                return NotFound();
+            }
+            return await _context.Expenses.Where(x => x.Status == "REVIEW").ToListAsync();
+        }
+
         // PUT: api/Expenses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
