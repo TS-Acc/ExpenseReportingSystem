@@ -128,12 +128,13 @@ namespace ExpenseReportingSystem.Controllers
             return await PutExpense(id, expense);
         }
 
-
+        // ************ Handmade ReviewExpense Method ************
+        //PUT: api/expenses/review/{id}
+        //Review Expense Method. 
         [HttpPut("review/{id}")]
         public async Task<IActionResult> ReviewExpense(int id, Expense expense)
         {
             var employee = await _context.Employees.FindAsync(expense.EmployeeId);
-            var expenseLine = await _context.Expenselines.SingleOrDefaultAsync(x => id == x.ExpenseId);
             switch (id == expense.Id)
             {
                 case false:
