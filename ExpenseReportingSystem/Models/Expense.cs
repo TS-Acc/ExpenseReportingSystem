@@ -18,8 +18,8 @@ namespace ExpenseReportingSystem.Models
 
         // virtual employee to hold the FK instance when reading an expense and a collection of expenselines related
         // to this expense
-        public virtual Employee? Employees { get; set; } = null!;
-        [JsonIgnore]
-        public virtual ICollection<Expenseline>? Expenselines { get; set; } = null!;
+        public virtual Employee? Employees { get; set; }
+       // [JsonIgnore]
+        public virtual ICollection<Expenseline>? Expenselines { get; set; }
     }
 }

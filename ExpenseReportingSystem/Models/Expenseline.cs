@@ -11,9 +11,9 @@ namespace ExpenseReportingSystem.Models {
         public int ExpenseId { get; set; }
 
         [JsonIgnore]
-        public virtual Expense Expense { get; set; } = null!;
+        public virtual Expense? Expense { get; set; }
 
         public int ItemId { get; set; }
-        public virtual Item Item { get; set; } = null!;
+        public virtual Item? Item { get; set; }
     }
 }

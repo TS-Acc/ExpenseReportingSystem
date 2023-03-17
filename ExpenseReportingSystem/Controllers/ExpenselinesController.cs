@@ -64,6 +64,7 @@ namespace ExpenseReportingSystem.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                await _RecalculateExpenseTotal(expenseline.ExpenseId);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -91,6 +92,7 @@ namespace ExpenseReportingSystem.Controllers
           }
             _context.Expenselines.Add(expenseline);
             await _context.SaveChangesAsync();
+            await _RecalculateExpenseTotal(expenseline.ExpenseId);
 
             return CreatedAtAction("GetExpenseline", new { id = expenseline.Id }, expenseline);
         }
@@ -111,6 +113,7 @@ namespace ExpenseReportingSystem.Controllers
 
             _context.Expenselines.Remove(expenseline);
             await _context.SaveChangesAsync();
+            await _RecalculateExpenseTotal(expenseline.ExpenseId);
 
             return NoContent();
         }
@@ -119,5 +122,28 @@ namespace ExpenseReportingSystem.Controllers
         {
             return (_context.Expenselines?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        // ************ Handmade RecalculateExpenseTotal Method ************
+        //
+
+        private async Task<IActionResult> _RecalculateExpenseTotal(int expenseId) {
+            var expense = await _context.Expenses.FindAsync(expenseId);
+            if (expense == null) {
+                return NotFound();
+            }
+
+            expense.Total = (from el in _context.Expenselines
+                             join i in _context.Items
+                             on el.ItemId equals i.Id
+                             where el.ExpenseId == expenseId
+                             select new {
+                                 lineTotal = el.Quantity * i.Price
+                             }).Sum(x => x.lineTotal);
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+
+
     }
 }

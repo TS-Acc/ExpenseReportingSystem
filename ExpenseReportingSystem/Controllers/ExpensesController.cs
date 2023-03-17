@@ -29,7 +29,10 @@ namespace ExpenseReportingSystem.Controllers
           {
               return NotFound();
           }
-            return await _context.Expenses.ToListAsync();
+            return await _context.Expenses
+                                    .Include(x=>x.Expenselines)
+                                    .Include(x => x.Employees)
+                                    .ToListAsync();
         }
 
         // GET: api/Expenses/5
@@ -40,7 +43,11 @@ namespace ExpenseReportingSystem.Controllers
           {
               return NotFound();
           }
-            var expense = await _context.Expenses.FindAsync(id);
+            var expense = await _context.Expenses
+                                            .Include(x => x.Expenselines)
+                                                .ThenInclude(x => x.Item)
+                                            .Include(x => x.Employees)
+                                            .SingleOrDefaultAsync(x => x.Id == id);
 
             if (expense == null)
             {
@@ -236,7 +243,7 @@ namespace ExpenseReportingSystem.Controllers
             _context.Expenses.Remove(expense);
             await _context.SaveChangesAsync();
             await UpdateEmployeeExpensesDueAndPaid(expense.EmployeeId);
-
+  
             return NoContent();
         }
 
@@ -244,6 +251,8 @@ namespace ExpenseReportingSystem.Controllers
         {
             return (_context.Expenses?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        //******************* Handmade UpdateEmployeeExpensesDueAndPaid Method ************************
         private async Task<ActionResult> UpdateEmployeeExpensesDueAndPaid(int employeeId)
         {
             var expenses = await _context.Expenses
