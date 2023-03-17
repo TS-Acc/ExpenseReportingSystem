@@ -101,6 +101,39 @@ namespace ExpenseReportingSystem.Controllers
             return NoContent();
         }
 
+        // ************ Handmade PayExpense Method ************
+        // PUT: api/Expenses/pay/5
+        [HttpPut("pay/{id}")]
+        public async Task<IActionResult> PayExpense(int id)
+        {
+            Expense? expense = await _context.Expenses.FindAsync(id);
+            if (expense is null)
+            {
+                return BadRequest();
+            }
+            Employee? employee = await _context.Employees.FindAsync(expense.EmployeeId);
+
+
+            if (expense.Status == "PAID")
+            {
+                return BadRequest("Expense already paid.");    
+            }
+
+            employee.ExpensesPaid += expense.Total;
+            employee.ExpensesDue -= expense.Total;
+            
+            expense.Status = "PAID";
+
+            if (employee.ExpensesDue < 0)
+            {
+                employee.ExpensesDue = 0;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         // ************ Handmade ApproveExpense Method ************
         // PUT: api/Expenses/approve/5
         [HttpPut("approve/{id}")]
@@ -207,5 +240,7 @@ namespace ExpenseReportingSystem.Controllers
         {
             return (_context.Expenses?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+
     }
 }
