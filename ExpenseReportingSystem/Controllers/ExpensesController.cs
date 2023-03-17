@@ -85,6 +85,7 @@ namespace ExpenseReportingSystem.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                await UpdateEmployeeExpensesDueAndPaid(expense.EmployeeId);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -213,6 +214,7 @@ namespace ExpenseReportingSystem.Controllers
           }
             _context.Expenses.Add(expense);
             await _context.SaveChangesAsync();
+            await UpdateEmployeeExpensesDueAndPaid(expense.EmployeeId);
 
             return CreatedAtAction("GetExpense", new { id = expense.Id }, expense);
         }
@@ -233,6 +235,7 @@ namespace ExpenseReportingSystem.Controllers
 
             _context.Expenses.Remove(expense);
             await _context.SaveChangesAsync();
+            await UpdateEmployeeExpensesDueAndPaid(expense.EmployeeId);
 
             return NoContent();
         }
@@ -240,6 +243,34 @@ namespace ExpenseReportingSystem.Controllers
         private bool ExpenseExists(int id)
         {
             return (_context.Expenses?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        private async Task<ActionResult> UpdateEmployeeExpensesDueAndPaid(int employeeId)
+        {
+            var expenses = await _context.Expenses
+                           .Where(ex => ex.EmployeeId == employeeId)
+                           .ToListAsync();
+            decimal newExpensesDue = 0;
+            decimal newExpensesPaid = 0;
+            foreach(var expense in expenses)
+            {
+                var employee = await _context.Employees.FindAsync(expense.EmployeeId);
+                if(employee == null)
+                {
+                    throw new Exception("Employee does not exist");
+                }
+                if(expense.Status == "PAID")
+                {
+                    newExpensesPaid += expense.Total;
+                }
+                else if (expense.Status != "PAID")
+                {
+                    newExpensesDue += expense.Total;
+                }
+                employee.ExpensesDue = newExpensesDue;
+                employee.ExpensesPaid = newExpensesPaid;
+            }
+            await _context.SaveChangesAsync();
+            return Ok();
         }
     }
 }
